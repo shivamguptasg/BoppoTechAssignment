@@ -6,17 +6,18 @@
  * @flow strict-local
  */
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { setAuth } from '../Redux/UserSlice';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setAuth} from '../Redux/UserSlice';
 import Home from '../Screens/Home';
 import Login from '../Screens/Login';
 import ProductDetail from '../Screens/ProductDetails';
+import Cart from '../Screens/Cart';
 
-const headerInfoScreens = ['Home', 'ProductDetail'];
+const headerInfoScreens = ['Home', 'ProductDetail', 'Cart'];
 
 const Stack = createStackNavigator();
 const Routes = params => {
@@ -56,18 +57,32 @@ const Routes = params => {
 
           headerLeft: props =>
             headerInfoScreens.includes(route.name) ? (
-              <Text
-                style={styles.tile}
-                onPress={() => setLogin(navigation)}>
+              <Text style={styles.tile} onPress={() => setLogin(navigation)}>
                 {isLoggedIn ? 'Logout' : 'Login'}
               </Text>
             ) : null,
 
-          headerRight: () => (
-            <Text style={styles.tile}>{`₹ ${myCart.reduce(function (acc, item) {
-              return acc + item.price * item.quantity;
-            }, 0)}`}</Text>
-          ),
+          headerRight: () =>
+            headerInfoScreens.includes(route.name) ? (
+              <View style={styles.cart}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                  }}
+                  onPress={() => navigation.navigate('Cart')}>
+                  <Text style={styles.tile}>MyCart : </Text>
+                  <Text style={[styles.tile]}>{myCart.length}</Text>
+                </TouchableOpacity>
+
+                <Text style={styles.tile}>{`₹ ${myCart.reduce(function (
+                  acc,
+                  item,
+                ) {
+                  return acc + item.price * item.quantity;
+                },
+                0)}`}</Text>
+              </View>
+            ) : null,
         })}>
         <Stack.Screen
           screenOptions={{headerShown: false}}
@@ -84,6 +99,11 @@ const Routes = params => {
           name="ProductDetail"
           component={ProductDetail}
         />
+        <Stack.Screen
+          screenOptions={{headerShown: false}}
+          name="Cart"
+          component={Cart}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -95,5 +115,10 @@ const styles = StyleSheet.create({
   tile: {
     fontWeight: 'bold',
     color: '#fff',
+  },
+  cart: {
+    flexDirection: 'row',
+    width: 110,
+    justifyContent: 'space-between',
   },
 });

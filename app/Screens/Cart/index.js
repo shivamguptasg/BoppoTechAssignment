@@ -8,12 +8,11 @@
 
 import React from 'react';
 import {FlatList, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import Product from '../../Components/Product';
 
-export default function Home(props) {
-  const productList = useSelector(state => state.user.productList);
-  const dispatch = useDispatch();
+export default function Cart(props) {
+  const myCart = useSelector(state => state.user.myCart);
 
   return (
     <View
@@ -22,8 +21,8 @@ export default function Home(props) {
         padding: 10,
       }}>
       <FlatList
-        data={productList}
-        renderItem={data => <Product {...data.item} />}
+        data={myCart}
+        renderItem={data => <Product {...data.item} showDetails={true} />}
         keyExtractor={item => item.id}
       />
     </View>
